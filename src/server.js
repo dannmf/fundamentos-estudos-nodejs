@@ -35,6 +35,13 @@ import { routes } from './routes.js';
 // 5xx: Server Error
 //   500: Internal Server Error
 
+// Três formas do front-end enviar informações
+// 1. Query Params: parâmetros nomeados enviados no endereço da requisição após "?" (Filtros, paginação - Não obrigatórios)
+// Exemplo: http://localhost:3333/users?name=Daniel&age=25
+// 2. Route Params: parâmetros utilizados para identificar recursos
+// Exemplo: http://localhost:3333/users/1
+// 3. Request Body: Corpo da requisição, utilizado para criar ou alterar recursos (usado para envio de informações)
+
 
 const server = http.createServer(async (req, res) => {
     const { url, method } = req;
