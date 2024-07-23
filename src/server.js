@@ -2,6 +2,7 @@ import http from 'node:http';
 import { json } from './middlewares/json.js';
 import { Database } from './database.js';
 import { randomUUID } from 'node:crypto';
+import { routes } from './routes.js';
 // Métodos HTTP
 // GET: Buscar informações do back-end
 // POST: Criar uma informação no back-end
@@ -34,32 +35,20 @@ import { randomUUID } from 'node:crypto';
 // 5xx: Server Error
 //   500: Internal Server Error
 
-const database = new Database()
 
 const server = http.createServer(async (req, res) => {
     const { url, method } = req;
 
     await json(req, res)
 
+    const route = routes.find(route => {
+        return route.method === method && route.path === url
+    })
 
-    if (method === 'GET' && url === '/users') {
-        const users = database.select('users')
-        return res
-            .end(JSON.stringify(users))
+    if(route){
+        return route.handler(req, res)
     }
 
-    if (method === 'POST' && url === '/users'){
-        const { name, email } = req.body
-        const user = ({
-            id: randomUUID(),
-            name: name,
-            email: email,
-        })
-
-        database.insert('users', user)
-
-        return res.writeHead(201).end()
-    }
 
     return res.writeHead(404).end()
 
