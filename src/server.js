@@ -47,9 +47,14 @@ const server = http.createServer(async (req, res) => {
     const { url, method } = req;
 
     await json(req, res)
-
     const route = routes.find(route => {
-        return route.method === method && route.path.test(url)
+        if (route.method === method && route.path instanceof RegExp) {
+            return route.path.test(url)
+        } else if (typeof route.path === 'string') {
+            const regex = (route.method === method && route.path === url)
+            return regex
+        }
+        return false
     })
 
     if(route){
@@ -67,4 +72,6 @@ const server = http.createServer(async (req, res) => {
     
 })
 
-server.listen(3333)
+server.listen(3333, () => {
+    console.log('Server is running on port 3333')
+})
